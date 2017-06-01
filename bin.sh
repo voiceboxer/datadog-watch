@@ -4,7 +4,7 @@ APP_KEY="$3"
 URL='https://app.datadoghq.com/api/v1/events'
 
 if [ -z "$FILE" ]; then
-  echo >&2 "Usage: datadog-logger [file] [api_key] [app_key]"
+  echo >&2 "Usage: datadog-watch [file] [api_key] [app_key]"
   exit 1
 fi
 
