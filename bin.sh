@@ -2,6 +2,7 @@ FILE="$1"
 API_KEY="$2"
 APP_KEY="$3"
 URL='https://app.datadoghq.com/api/v1/events'
+GNU_SED=0
 
 if [ -z "$FILE" ]; then
   echo >&2 "Usage: datadog-watch [file] [api_key] [app_key]"
@@ -25,6 +26,19 @@ json_body() {
 
 log() {
   echo >&2 "[$(date)] $1"
+}
+
+test_sed() {
+  echo t | sed -u "s,t,u,g" &> /dev/null
+  GNU_SED=$?
+}
+
+strip_ansi() {
+  if [ $GNU_SED -ne 0 ]; then
+    cat
+  else
+    sed -u "s,\x1B\[[0-9;]*[a-zA-Z],,g"
+  fi
 }
 
 capture() {
@@ -52,4 +66,5 @@ capture() {
 
 log "Watching $FILE"
 
-tail -f -n 0 $1 | capture
+test_sed
+tail -f -n 0 $1 | strip_ansi | capture
